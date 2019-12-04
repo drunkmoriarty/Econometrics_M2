@@ -72,3 +72,25 @@ df['PV3']=np.where(df['Q3_1']=="plus d'inconvÃ©nients que d'avantages",1,0)
 df['PTC1']=np.where(df['Q3_2']=="plus d'avantages que d'inconvÃ©nients",1,0)
 df['PTC2']=np.where(df['Q3_2']=="autant d'avantages que d'inconvÃ©nients",1,0)
 df['PTC3']=np.where(df['Q3_2']=="plus d'inconvÃ©nients que d'avantages",1,0)
+
+#Partage des frais
+df['Frais']=df.Q8.apply(lambda x:1 if x=='TrÃ¨s souvent' or x=='Assez souvent' or x=='Rarement' else 0)
+
+#Motivation partage trajet
+#Ref= "Aucune autre raison" + "Pour une autre raison"
+df['Mot1']=np.where(df['Q9A']=="Pour s'entraider",1,0)
+df['Mot2']=np.where(df['Q9A']=="Pour faire des Ã©conomies",1,0)
+df['Mot3']=np.where(df['Q9A']=="Pour rendre le trajet plus convivial",1,0)
+df['Mot4']=np.where(df['Q9A']=="Pour diminuer la pollution automobile",1,0)
+
+#Influence entourage trajet travail
+#ref= “Non, aucune” / “Ne sait pas”
+df['InfluTra1']=np.where(df['Q22_1']=="Oui, la plupart des personnes de mon entourage",1,0)
+df['InfluTra2']=np.where(df['Q22_1']=="Oui, une partie",1,0)
+df['InfluTra3']=np.where(df['Q22_1']=="Oui, mais trÃ¨s peue",1,0)
+
+#Influence entourage trajet +80km
+#ref= “Non, aucune” / “Ne sait pas”
+df['Influ80_1']=np.where(df['Q22_2']=="Oui, la plupart des personnes de mon entourage",1,0)
+df['Influ80_2']=np.where(df['Q22_2']=="Oui, une partie",1,0)
+df['Influ80_1']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peue",1,0)
