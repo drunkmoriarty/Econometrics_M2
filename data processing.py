@@ -17,6 +17,12 @@ df['Prof_Int']=np.where(df['PCS_REP']=='Professions intermÃ©diaires',1,0)
 df['Employe']=np.where(df['PCS_REP']=='EmployÃ©s',1,0)
 df['Ouvrier']=np.where(df['PCS_REP']=='Ouvriers',1,0)
 df['Retraite']=np.where(df['PCS_REP']=='RetraitÃ©s',1,0)
-df['Etudiant']=np.where(df['PCS_Rep']=='LycÃ©en, Ã©tudiant',1,0)
+df['Etudiant']=np.where(df['PCS_REP']=='LycÃ©en, Ã©tudiant',1,0)
 
 # Taille de l'agglomération - Variable REC_agglo
+df['Village']=np.where(df['REC_agglo']=='MOINS DE 2000 (ZONE RURALE)',1,0)
+df['PVille']=df.REC_agglo.apply(lambda x:1 if x=='2 000 A 5 000' or x=='5 000 A 10 000' else 0)
+df['MVille']=df.REC_agglo.apply(lambda x:1 if x=='10 000 A 20 000' or x=='20 000 A 50 000' else 0)
+df['GVille']=df.REC_agglo.apply(lambda x:1 if x=='50 000 A 100 000' or x=='100 000 A 200 000' else 0)
+df['EVille']=df.REC_agglo.apply(lambda x:1 if x=='+ DE 200 000' or x=='PARIS' else 0)
+
