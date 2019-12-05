@@ -1,6 +1,7 @@
 import pandas as pd 
 import numpy as np 
-import xlrd #To open Excel files
+import xlrd #Ouvrir les fichiers Excel
+import statsmodels.formula.api as sm
 
 df=pd.read_excel('Consommation Collaborative.xls')
 
@@ -19,7 +20,7 @@ df['Sexe_Binaire']=np.where(df['SEXE']=='Une femme',0,1)
 #"Professions intermÃ©diaires", "RetraitÃ©s", "Cadres et professions intellectuelles supÃ©rieures","EmployÃ©s","Ouvriers","LycÃ©en, Ã©tudiant","Sans activitÃ© professionnelle "
 #Ref = sans activité pro
 df['Agri']=np.where(df['PCS_REP']=='Agriculteurs exploitants',1,0)
-df['Artisan']=np.where(df['PCS_REP']=="Artisans, commerçants et chefs d'entreprise",1,0)
+df['Artisan']=np.where(df['PCS_REP']=="Artisans, commerÃ§ants et chefs d'entreprise",1,0)
 df['Cadre']=np.where(df['PCS_REP']=='Cadres et professions intellectuelles supÃ©rieures',1,0)
 df['Prof_Int']=np.where(df['PCS_REP']=='Professions intermÃ©diaires',1,0)
 df['Employe']=np.where(df['PCS_REP']=='EmployÃ©s',1,0)
@@ -28,20 +29,20 @@ df['Retraite']=np.where(df['PCS_REP']=='RetraitÃ©s',1,0)
 df['Etudiant']=np.where(df['PCS_REP']=='LycÃ©en, Ã©tudiant',1,0)
 
 # Taille de l'agglomération - Variable REC_agglo
-#Ref = NC
+#Ref = Paris 
 df['Village']=np.where(df['REC_agglo']=='MOINS DE 2000 (ZONE RURALE)',1,0)
 df['PVille']=df.REC_agglo.apply(lambda x:1 if x=='2 000 A 5 000' or x=='5 000 A 10 000' else 0)
 df['MVille']=df.REC_agglo.apply(lambda x:1 if x=='10 000 A 20 000' or x=='20 000 A 50 000' else 0)
 df['GVille']=df.REC_agglo.apply(lambda x:1 if x=='50 000 A 100 000' or x=='100 000 A 200 000' else 0)
-df['EVille']=df.REC_agglo.apply(lambda x:1 if x=='+ DE 200 000' or x=='PARIS' else 0)
+df['EVille']=df.REC_agglo.apply(lambda x:1 if x=='+ DE 200 000' else 0)
 
 #Deserte lieu de résidence par transport en commun
 #Ref = "Très bien déservie"
 df['TC1']=np.where(df['S4']=='TrÃ¨s mal desservi',1,0)
-df['TC2']=np.where(df['S4']=='Assez mal desservi',1,0)
+df['TC2']=np.where(df['S4']=='Assez mal desservi ',1,0)
 df['TC3']=np.where(df['S4']=='Assez bien desservi',1,0)
 
-#Utilisation voiture pour aller au travail
+#Utilisation voiture pour aller au travail, 
 #ref="non concernée" & "jamais"
 df['VTR1']=np.where(df['Q1_1']=='systÃ©matiquement',1,0)
 df['VTR2']=np.where(df['Q1_1']=='le plus souvent',1,0)
@@ -51,9 +52,9 @@ df['VTR4']=np.where(df['Q1_1']=='jamais',1,0)
 #Utilisation voiture pour trajet de +80km
 #ref="non concernée" & "jamais"
 df['UTV1']=np.where(df['Q1_3']=='systÃ©matiquement',1,0)
-df['UVT2']=np.where(df['Q1_3']=='le plus souvent',1,0)
-df['UVT3']=np.where(df['Q1_3']=='occasionnellement',1,0)
-df['UVT4']=np.where(df['Q1_3']=='jamais',1,0)
+df['UTV2']=np.where(df['Q1_3']=='le plus souvent',1,0)
+df['UTV3']=np.where(df['Q1_3']=='occasionnellement',1,0)
+df['UTV4']=np.where(df['Q1_3']=='jamais',1,0)
 
 #Fréquence trajet +80km - Possibilité de problème de colinéarité
 #ref=
@@ -87,10 +88,20 @@ df['Mot4']=np.where(df['Q9A']=="Pour diminuer la pollution automobile",1,0)
 #ref= “Non, aucune” / “Ne sait pas”
 df['InfluTra1']=np.where(df['Q22_1']=="Oui, la plupart des personnes de mon entourage",1,0)
 df['InfluTra2']=np.where(df['Q22_1']=="Oui, une partie",1,0)
-df['InfluTra3']=np.where(df['Q22_1']=="Oui, mais trÃ¨s peue",1,0)
+df['InfluTra3']=np.where(df['Q22_1']=="Oui, mais trÃ¨s peu",1,0)
 
 #Influence entourage trajet +80km
 #ref= “Non, aucune” / “Ne sait pas”
 df['Influ80_1']=np.where(df['Q22_2']=="Oui, la plupart des personnes de mon entourage",1,0)
 df['Influ80_2']=np.where(df['Q22_2']=="Oui, une partie",1,0)
-df['Influ80_1']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peue",1,0)
+df['Influ80_1']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peu",1,0)
+
+
+###################################### ECONOMETRIE #########################################
+#Analyse du partage de trajet avec une personne extérieur pour aller au travail
+#Modèle probit - Partrav
+#Variables : Sexe_Binaire, AGE_1, Agri, Artisan, Cadre, Prof_Int, Employe, Ouvrier, Retraite, Etudiant, Village, PVille, MVille, GVille, EVille, TC1, TC2, TC3, S14, VTR1 VTR2 VTR3 VTR4 PV1 PV2 PV3 PTC1 PTC2 PTC3 Frais Mot1 Mot2 Mot3 Mot4 InflueTra1 InflueTra2 InflueTra3
+formula='ParTrav~Sexe_Binaire+AGE_1+Agri+Artisan+Cadre+Prof_Int+Employe+Ouvrier+Retraite+Etudiant+Village+PVille+MVille+GVille+EVille+TC1+TC2+TC3+S14+VTR1+VTR2+VTR3+VTR4+PV1+PV2+PV3+PTC1+PTC2+PTC3+Frais+Mot1+Mot2+Mot3+Mot4+InfluTra1+InfluTra2+InfluTra3'
+estimation_logit_travail=sm.logit(formula, data=df)
+result=estimation_logit_travail.fit()
+print(result.summary())
