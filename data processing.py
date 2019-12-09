@@ -95,8 +95,6 @@ df['Influ80_1']=np.where(df['Q22_2']=="Oui, la plupart des personnes de mon ento
 df['Influ80_2']=np.where(df['Q22_2']=="Oui, une partie",1,0)
 df['Influ80_3']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peu",1,0)
 
-
-
 ###################################### ECONOMETRIE #########################################
 #Analyse du partage de trajet avec une personne extérieure pour aller au travail
 #Modèle logit - Partrav
@@ -105,7 +103,6 @@ formula='ParTrav~Sexe_Binaire+AGE_1+Agri+Artisan+Cadre+Prof_Int+Employe+Ouvrier+
 estimation_logit_travail=sm.logit(formula, data=df)
 result=estimation_logit_travail.fit()
 print(result.summary())
-
 
 #Analyse du partage de trajet avec une personne extérieur pour des trajets de plus de 80 kms
 #Modèle probit - Par80
