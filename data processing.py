@@ -57,10 +57,9 @@ df['UTV3']=np.where(df['Q1_3']=='occasionnellement',1,0)
 df['UTV4']=np.where(df['Q1_3']=='jamais',1,0)
 
 #Fréquence trajet +80km - Possibilité de problème de colinéarité
-#ref=
+#ref=df['FT3']=np.where(df['Q2']=='moins souvent ',1,0)
 df['FT1']=np.where(df['Q2']=='1 fois par semaine ou plus',1,0)
-df['FT2']=np.where(df['Q2']=='1 Ã 3 fois par mois',1,0)
-df['FT3']=np.where(df['Q2']=='moins souvent',1,0)
+df['FT2']=np.where(df['Q2']=='1 Ã  3 fois par mois',1,0)
 
 #Perception de l'utilisation de la voiture 
 #ref = "ne sait pas"
@@ -94,14 +93,24 @@ df['InfluTra3']=np.where(df['Q22_1']=="Oui, mais trÃ¨s peu",1,0)
 #ref= “Non, aucune” / “Ne sait pas”
 df['Influ80_1']=np.where(df['Q22_2']=="Oui, la plupart des personnes de mon entourage",1,0)
 df['Influ80_2']=np.where(df['Q22_2']=="Oui, une partie",1,0)
-df['Influ80_1']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peu",1,0)
+df['Influ80_3']=np.where(df['Q22_2']=="Oui, mais trÃ¨s peu",1,0)
+
 
 
 ###################################### ECONOMETRIE #########################################
-#Analyse du partage de trajet avec une personne extérieur pour aller au travail
-#Modèle probit - Partrav
+#Analyse du partage de trajet avec une personne extérieure pour aller au travail
+#Modèle logit - Partrav
 #Variables : Sexe_Binaire, AGE_1, Agri, Artisan, Cadre, Prof_Int, Employe, Ouvrier, Retraite, Etudiant, Village, PVille, MVille, GVille, EVille, TC1, TC2, TC3, S14, VTR1 VTR2 VTR3 VTR4 PV1 PV2 PV3 PTC1 PTC2 PTC3 Frais Mot1 Mot2 Mot3 Mot4 InflueTra1 InflueTra2 InflueTra3
 formula='ParTrav~Sexe_Binaire+AGE_1+Agri+Artisan+Cadre+Prof_Int+Employe+Ouvrier+Retraite+Etudiant+Village+PVille+MVille+GVille+EVille+TC1+TC2+TC3+S14+VTR1+VTR2+VTR3+VTR4+PV1+PV2+PV3+PTC1+PTC2+PTC3+Frais+Mot1+Mot2+Mot3+Mot4+InfluTra1+InfluTra2+InfluTra3'
 estimation_logit_travail=sm.logit(formula, data=df)
 result=estimation_logit_travail.fit()
+print(result.summary())
+
+
+#Analyse du partage de trajet avec une personne extérieur pour des trajets de plus de 80 kms
+#Modèle probit - Par80
+#Variables : Sexe_Binaire, AGE_1, Agri, Artisan, Cadre, Prof_Int, Employe, Ouvrier, Retraite, Etudiant, Village, PVille, MVille, GVille, EVille, TC1, TC2, TC3, S14, UTV1 UTV2 UTV3 UTV4, FT1 FT2 FT3, PV1 PV2 PV3 PTC1 PTC2 PTC3 Frais Mot1 Mot2 Mot3 Mot4 Influ80_1 Influ80_2 Influ80_3
+formula='Par80~Sexe_Binaire+AGE_1+Agri+Artisan+Cadre+Prof_Int+Employe+Ouvrier+Retraite+Etudiant+Village+PVille+MVille+GVille+EVille+TC1+TC2+TC3+S14+UTV1+UTV2+UTV3+UTV4+FT1+FT2+PV1+PV2+PV3+PTC1+PTC2+PTC3+Frais+Mot1+Mot2+Mot3+Mot4+Influ80_1+Influ80_2+Influ80_3'
+estimation_logit_80=sm.logit(formula, data=df)
+result=estimation_logit_80.fit()
 print(result.summary())
