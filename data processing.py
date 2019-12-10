@@ -15,6 +15,7 @@ df['Par80']=df.Q4_3.apply(lambda x:1 if x=='rÃ©guliÃ¨rement' or x=='occasion
 ################ VARIABLES EXPLICATIVES #######################################
 #Sexe : Femme=0 // Homme= 1
 df['Sexe_Binaire']=np.where(df['SEXE']=='Une femme',0,1)
+print(df['Sexe_Binaire'].mean())
 
 #Profession - Variable PCS_REP
 #"Professions intermÃ©diaires", "RetraitÃ©s", "Cadres et professions intellectuelles supÃ©rieures","EmployÃ©s","Ouvriers","LycÃ©en, Ã©tudiant","Sans activitÃ© professionnelle "
@@ -43,7 +44,7 @@ df['TC2']=np.where(df['S4']=='Assez mal desservi ',1,0)
 df['TC3']=np.where(df['S4']=='Assez bien desservi',1,0)
 
 #Utilisation voiture pour aller au travail, 
-#ref="non concernée" & "jamais"
+#ref="non concernée"
 df['VTR1']=np.where(df['Q1_1']=='systÃ©matiquement',1,0)
 df['VTR2']=np.where(df['Q1_1']=='le plus souvent',1,0)
 df['VTR3']=np.where(df['Q1_1']=='occasionnellement',1,0)
